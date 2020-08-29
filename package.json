@@ -16,7 +16,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
-    "jquery": "^3.5.1"
+    "jquery": "^3.5.1",
+    "uikit": "^3.5.7"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",
