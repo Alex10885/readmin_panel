@@ -5,6 +5,7 @@ import DOMHelper from '../../helpers/dom-helper';
 import EditorText from '../editor-text';
 import UIkit from 'uikit';
 import Spinner from '../spinner';
+import ConfirmModal from '../confirm-modal/confirm-modal';
 
 
 export default class Editor extends Component {
@@ -19,6 +20,7 @@ export default class Editor extends Component {
         this.createNewPage = this.createNewPage.bind(this);
         this.isLoading = this.isLoading.bind(this);
         this.isLoaded = this.isLoaded.bind(this);
+        this.save = this.save.bind(this);
     }
 
     componentDidMount() {
@@ -133,27 +135,11 @@ export default class Editor extends Component {
                 {spinner}
 
                 <div className="panel">
+                    <button className="uk-button uk-button-primary uk-margin-small-right" uk-toggle="target: #modal-open">Открыть</button>
                     <button className="uk-button uk-button-primary" uk-toggle="target: #modal-save">Опубликовать</button>
                 </div>
-                
-                <div id="modal-save" uk-modal={modal.toString()}>
-                    <div className="uk-modal-dialog uk-modal-body">
-                        <h2 className="uk-modal-title">Сохранение</h2>
-                        <p>Вы действительно хотите сохранить изменения?</p>
-                        <p className="uk-text-right">
-                            <button className="uk-button uk-button-default uk-modal-close" type="button">Отменить</button>
-                            <button 
-                                className="uk-button uk-button-primary uk-modal-close" 
-                                type="button" onClick={() => this.save(() => {
-                                    UIkit.notification({ message:'Успешно сохранено!', status: 'success'})
-                                },
-                                () => {
-                                    UIkit.notification({ message:'Ошибка сохранения!', status: 'danger'})
-                                })}>Опубликовать
-                            </button>
-                        </p>
-                    </div>
-                </div>
+
+                <ConfirmModal modal={modal} target={'modal-save'} method={this.save}/>
             </>
             
         )  
