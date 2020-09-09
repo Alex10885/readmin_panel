@@ -5,7 +5,8 @@ import DOMHelper from '../../helpers/dom-helper';
 import EditorText from '../editor-text';
 import UIkit from 'uikit';
 import Spinner from '../spinner';
-import ConfirmModal from '../confirm-modal/confirm-modal';
+import ConfirmModal from '../confirm-modal';
+import ChooseModal from '../choose-modal';
 
 
 export default class Editor extends Component {
@@ -21,13 +22,18 @@ export default class Editor extends Component {
         this.isLoading = this.isLoading.bind(this);
         this.isLoaded = this.isLoaded.bind(this);
         this.save = this.save.bind(this);
+        this.init = this.init.bind(this);
     }
 
     componentDidMount() {
-        this.init(this.currentPage);
+        this.init(null, this.currentPage);
     }
 
-    init(page) {
+    init(e, page) {
+        if (e) {
+            e.preventDefault();
+        }
+        this.isLoading();
         this.iframe = document.querySelector('iframe');
         this.open(page, this.isLoaded);
         this.loadPageList();
@@ -45,7 +51,8 @@ export default class Editor extends Component {
             })
             .then(DOMHelper.serializeDOMToString)
             .then(html => axios.post("./api/saveTempPage.php", {html}))
-            .then(() => this.iframe.load("../temp.html"))
+            .then(() => this.iframe.load("../retfgdf_rtrt.html"))
+            .then( () => axios.post("./api/deleteTempPage.php"))
             .then(() => this.enableEditing())
             .then(() => this.injectStyles())
             .then(cb);        
@@ -89,7 +96,7 @@ export default class Editor extends Component {
 
     loadPageList(){
         axios
-            .get("./api")
+            .get("./api/pageList.php")
             .then(res => this.setState({pageList: res.data}))
     }
 
@@ -121,7 +128,7 @@ export default class Editor extends Component {
     }
 
     render() {
-        const {loading} = this.state;
+        const {loading, pageList} = this.state;
         const modal = true;
         let spinner;
 
@@ -140,6 +147,7 @@ export default class Editor extends Component {
                 </div>
 
                 <ConfirmModal modal={modal} target={'modal-save'} method={this.save}/>
+                <ChooseModal modal={modal} target={'modal-open'} data={pageList} redirect={this.init}/>
             </>
             
         )  
