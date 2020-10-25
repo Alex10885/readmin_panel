@@ -9,9 +9,9 @@
   "author": "",
   "license": "ISC",
   "browserslist": [
-    "last 2 chrome versions",
-    "last 2 firefox versions",
-    "last 2 ios versions"
+    "last 4 chrome versions",
+    "last 4 firefox versions",
+    "last 4 ios versions"
   ],
   "dependencies": {
     "axios": "^0.19.2",
@@ -23,9 +23,13 @@
     "@babel/core": "^7.11.1",
     "@babel/preset-env": "^7.11.0",
     "@babel/preset-react": "^7.10.4",
+    "autoprefixer": "^10.0.1",
     "babel-loader": "^8.1.0",
     "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-postcss": "^9.0.0",
     "gulp-sass": "^4.1.0",
+    "postcss": "^8.1.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "webpack": "^4.44.1",

@@ -1,8 +1,13 @@
 const gulp = require("gulp");
 const webpack = require("webpack-stream");
 const sass = require("gulp-sass");
+const autoprefixer = require("autoprefixer");
+const cleanCSS = require("gulp-clean-css");
+const postcss = require("gulp-postcss");
+
 
 const dist = "../portfolio/admin/";
+const prod = "./build";
 
 gulp.task("copy-html", () => {
     return gulp.src("./app/src/index.html")
@@ -42,6 +47,7 @@ gulp.task("build-js", () => {
 });
 
 gulp.task("build-sass", () => {
+    
     return gulp.src("./app/scss/style.scss")
                 .pipe(sass().on('error', sass.logError))
                 .pipe(gulp.dest(dist));
@@ -70,4 +76,63 @@ gulp.task("watch", () => {
 });
 
 gulp.task("build", gulp.parallel("copy-html", "build-js", "build-sass", "copy-api", "copy-assets"));
+
+gulp.task("prod", () => {
+    gulp.src("./app/src/index.html")
+                .pipe(gulp.dest(prod));
+
+    gulp.src("./app/api/**/.*")
+                .pipe(gulp.dest(prod + "/api"));
+  
+    gulp.src("./app/api/**/*.*")
+                .pipe(gulp.dest(prod + "/api"));
+
+    gulp.src("./app/assets/**/*.*")
+                .pipe(gulp.dest(prod + "/assets"));
+
+    gulp.src("./app/src/main.js")
+                .pipe(webpack({
+                    mode: 'production',
+                    output: {
+                        filename: 'script.js'
+                    },
+                    module: {
+                        rules: [
+                          {
+                            test: /\.m?js$/,
+                            exclude: /(node_modules|bower_components)/,
+                            use: {
+                              loader: 'babel-loader',
+                              options: {
+                                presets: [['@babel/preset-env', {
+                                    debug: false,
+                                    corejs: 3,
+                                    useBuiltIns: "usage"
+                                }],
+                                 "@babel/react"]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                }))
+                .pipe(gulp.dest(prod));
+
+                const plugins = [
+                  autoprefixer({overrideBrowserslist: [
+
+                    "last 4 chrome versions",
+                    "last 4 firefox versions",
+                    "last 4 ios versions"
+
+                  ]})
+                ];
+
+     return gulp.src("./app/scss/style.scss")
+                .pipe(sass().on('error', sass.logError))
+                .pipe(postcss(plugins))
+                .pipe(cleanCSS())
+                .pipe(gulp.dest(prod));
+});
+
 gulp.task("default", gulp.parallel("watch", "build"));
